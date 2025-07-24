@@ -1,0 +1,22 @@
+{
+  "context_settings": {
+    "default_top_k": 10,
+    "default_context_length": 16384,
+    "max_context_chars": 50000,
+    "description": "Number of documents to retrieve for context"
+  },
+  "model_settings": {
+    "llm_model": "llama2",
+    "embedding_model": "nomic-embed-text",
+    "ollama_url": "http://localhost:11434"
+  },
+  "prompt_settings": {
+    "system_prompt": "You are an AI assistant for the ELP Aviation Crew Rules software system. This system manages crew rules and regulations for airlines.",
+    "instruction": "Answer the question based ONLY on the provided context. If the context contains the information, provide a detailed, specific answer. If the context doesn't contain enough information, say 'I don't have enough information in the provided documents to answer this question.' Do NOT make up information or provide generic answers. Be specific and reference the actual content from the documents."
+  },
+  "debug_settings": {
+    "enable_debug_logging": true,
+    "show_context_preview": true,
+    "show_document_details": true
+  }
+}
