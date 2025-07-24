@@ -1,8 +1,8 @@
 {
   "context_settings": {
-    "default_top_k": 12,
-    "default_context_length": 16384,
-    "max_context_chars": 50000,
+    "default_top_k": 5,
+    "default_context_length": 32768,
+    "max_context_chars": 150000,
     "description": "Number of documents to retrieve for context"
   },
   "model_settings": {

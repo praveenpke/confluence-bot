@@ -81,7 +81,6 @@
             margin-bottom: 0;
             overflow-y: auto;
             max-height: calc(100vh - 140px);
-            scroll-behavior: smooth;
         }
 
         .message {
@@ -108,6 +107,10 @@
             color: #ececf1;
         }
 
+        .message.bot {
+            margin-bottom: 2rem;
+        }
+        
         .message.bot .message-content {
             color: #ececf1;
         }
@@ -885,10 +888,6 @@
             });
 
             messageDiv.appendChild(sourcesDiv);
-            
-            // Scroll to bottom after adding sources
-            const messagesContainer = document.getElementById('chatMessages');
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         async function sendMessage() {
@@ -971,9 +970,6 @@
                                     case 'char':
                                         // Accumulate text without formatting during streaming
                                         botContent.textContent += data.char;
-                                        // Scroll to bottom as text is being added
-                                        const messagesContainer = document.getElementById('chatMessages');
-                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
                                         break;
 
                                     case 'complete':
@@ -986,9 +982,6 @@
                                         if (sources) {
                                             addSources(sources, currentMessageId);
                                         }
-                                        // Scroll to bottom after formatting is complete
-                                        const messagesContainer = document.getElementById('chatMessages');
-                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
                                         break;
 
                                     case 'error':
