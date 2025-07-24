@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELP Crew Rules Q&A Bot</title>
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1f;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #ececf1;
+        }
+
+        .header {
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #ececf1;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header h1::after {
+            font-size: 0.8rem;
+            color: #8e8ea0;
+        }
+
+        .settings-icon {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #ececf1;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-icon:hover {
+            background: #4a4b53;
+        }
+
+        .chat-container {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: transparent;
+            padding: 0;
+            font-size: 13px;
+            margin-bottom: 0;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: 0;
+            animation: fadeIn 0.3s ease-in;
+            border-radius: 25px;
+        }
+
+        .message.user {
+            background: #363637;
+            float: right;
+        }
+
+        .message-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            word-wrap: break-word;
+            line-height: 1.6;
+            color: #ececf1;
+        }
+
+        .message.user .message-content {
+            color: #ececf1;
+        }
+
+        .message.bot .message-content {
+            color: #ececf1;
+        }
+
+        .message.bot .message-content strong {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .message.bot .message-content em {
+            font-style: italic;
+            color: #7f8c8d;
+        }
+
+        .message.bot .message-content br {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Enhanced formatting styles */
+        .message.bot .message-content h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ececf1;
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #4a4b53;
+        }
+
+        .message.bot .message-content h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ececf1;
+            margin: 1rem 0 0.5rem 0;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #4a4b53;
+        }
+
+        .message.bot .message-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ececf1;
+            margin: 0.75rem 0 0.5rem 0;
+        }
+
+        .message.bot .message-content ol {
+            margin: 1rem 0;
+            padding-left: 1rem;
+        }
+
+        .message.bot .message-content ul {
+            margin: 1rem 0;
+            padding-left: 1rem;
+        }
+
+        .message.bot .message-content li {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+            padding-left: 0.5rem;
+        }
+
+        .message.bot .message-content strong {
+            color: #ececf1;
+            font-weight: 600;
+        }
+
+        .message.bot .message-content pre {
+            background: #1e1e1e;
+            border: 1px solid #4a4b53;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            color: #ececf1;
+        }
+
+        .message.bot .message-content code {
+            background: #1e1e1e;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #ececf1;
+        }
+
+        .message.bot .message-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .message.bot .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message.bot .message-content.typing {
+            background: #f8f9fa;
+            color: #666;
+            font-style: italic;
+        }
+
+        .sources {
+            padding: 0px 30px;
+            border-radius: 8px;
+        }
+
+        .sources h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .source-item {
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .source-item a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .source-item a:hover {
+            text-decoration: underline;
+        }
+
+        .input-container {
+            background: #1e1e1f;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-radius: 24px;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 0.75rem 3rem 0.75rem 1rem;
+            border-radius: 24px;
+            background: #40414f;
+            color: #ececf1;
+            font-size: 15px;
+            outline: none;
+            border: none;
+            transition: all 0.2s ease;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            border-color: #8e8ea0;
+            background: #40414f;
+        }
+
+        .chat-input::placeholder {
+            color: #8e8ea0;
+        }
+
+        .chat-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #2a2a2b;
+        }
+
+        .chat-input:disabled::placeholder {
+            color: #6a6a6a;
+        }
+
+        .send-button {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #40414f;
+            color: #ececf1;
+            border: none;
+            border-radius: 50%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #4a4b53;
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .disclaimer {
+            text-align: center;
+            color: #8e8ea0;
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e1e1f;
+            z-index: -1;
+        }
+
+        .disclaimer a {
+            color: #8e8ea0;
+            text-decoration: underline;
+        }
+
+        .disclaimer a:hover {
+            color: #ececf1;
+        }
+
+        /* Popup Config Panel Styles */
+        .config-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+
+        .config-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1e1e1f;
+            border: 1px solid #4a4b53;
+            border-radius: 12px;
+            padding: 0;
+            z-index: 1001;
+            min-width: 400px;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: popupSlideIn 0.3s ease-out;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #4a4b53;
+            background: #2a2a2b;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .config-header h3 {
+            margin: 0;
+            color: #ececf1;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: #8e8ea0;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            background: #4a4b53;
+            color: #ececf1;
+        }
+
+        .config-content {
+            padding: 1.5rem;
+        }
+
+        .config-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .config-item label {
+            display: block;
+            color: #ececf1;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .config-item input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #4a4b53;
+            border-radius: 6px;
+            background: #c8c5c5;
+            color: #080808;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .config-item input:focus {
+            border-color: #8e8ea0;
+            background: #40414f;
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .save-button {
+            background: #2b7e28;
+            color: #d4d4d7;
+            border: none;
+            border-radius: 6px;
+            padding: 2px 12px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .save-button:hover {
+            background: #3c9339;
+        }
+
+        .cancel-button {
+            background: #40414f;
+            color: #ececf1;
+            border: 1px solid #4a4b53;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-button:hover {
+            background: #4a4b53;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .config-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .config-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-item label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .config-item input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .config-toggle {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: underline;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        .typing-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .input-container {
+                flex-direction: column;
+            }
+
+            .send-button {
+                width: 100%;
+            }
+        }
+
+        .ai-glow-box {
+            border-radius: 24px;
+            background: #0f0f0f;
+            color: white;
+            text-align: center;
+
+            /* Outer glow */
+            box-shadow:
+                0 0 20px rgba(255, 0, 255, 0.4),
+                0 0 40px rgba(0, 255, 255, 0.3),
+                0 0 60px rgba(0, 100, 255, 0.4);
+            background-image:
+                linear-gradient(#0f0f0f, #0f0f0f),
+                linear-gradient(90deg, #ff00ff, #00ffff, #0066ff);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+        }
+
+        @keyframes aiPulse {
+            0% {
+                box-shadow: 0 0 5px #ff00ff, 0 0 10px #00ffff;
+            }
+
+            50% {
+                box-shadow: 0 0 5px #00ffff, 0 0 10px #ff00ff;
+            }
+
+            100% {
+                box-shadow: 0 0 5px #ff00ff, 0 0 10px #00ffff;
+            }
+        }
+
+        .ai-glow-box {
+            animation: aiPulse 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>ELP Chat</h1>
+        <button class="settings-icon" onclick="toggleConfig()" title="Settings">
+            ⚙️
+        </button>
+    </div>
+
+    <div class="chat-container">
+        <!-- Popup Config Panel -->
+        <div class="config-popup-overlay" id="configOverlay" style="display: none;" onclick="closeConfig()"></div>
+        <div class="config-popup" id="configPanel" style="display: none;">
+            <div class="config-header">
+                <h3>⚙️ Settings</h3>
+                <button class="close-button" onclick="closeConfig()">×</button>
+            </div>
+            <div class="config-content">
+                <div class="config-item">
+                    <label for="topK">Documents Retrieved:</label>
+                    <input type="number" id="topK" min="1" max="50" value="10">
+                </div>
+                <div class="config-item">
+                    <label for="contextLength">Context Length (tokens):</label>
+                    <input type="number" id="contextLength" min="1000" max="65536" value="16384">
+                </div>
+                <div class="config-item">
+                    <label for="maxChars">Max Context Characters:</label>
+                    <input type="number" id="maxChars" min="1000" max="200000" value="50000">
+                </div>
+                <div class="config-actions">
+                    <button class="cancel-button" onclick="closeConfig()">Cancel</button>
+                    <button class="save-button" onclick="saveConfig()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Hello! I'm your ELP assistant. How can I help you today?
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper ai-glow-box">
+                <textarea class="chat-input" id="chatInput" placeholder="Ask anything" rows="1"
+                    oninput="autoResize(this)"></textarea>
+                <button class="send-button" id="sendButton">
+                    ➤
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        ELP Chat can make mistakes. Check important info. See <a href="#" onclick="toggleConfig()">Settings</a>.
+    </div>
+
+    <script>
+        let isStreaming = false;
+        let currentMessageId = null;
+
+        // Load configuration on page load
+        window.addEventListener('load', function() {
+            loadConfig();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            const chatInput = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            // Add keydown event listener for Enter key
+            chatInput.addEventListener('keydown', function(event) {
+                console.log('Key pressed:', event.key, 'Shift:', event.shiftKey);
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    console.log('Enter pressed, calling sendMessage');
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Add click event listener for send button
+            sendButton.addEventListener('click', function(event) {
+                console.log('Send button clicked');
+                event.preventDefault();
+                sendMessage();
+            });
+        }
+
+        function formatMarkdown(text) {
+            if (!text) return '';
+
+            console.log('Formatting markdown for text:', text.substring(0, 200) + '...');
+
+            // Check if marked.js is loaded
+            if (typeof marked === 'undefined') {
+                console.error('Marked.js library not loaded!');
+                return text; // Return plain text if library not available
+            }
+
+            try {
+                // Use simple marked.js configuration
+                const result = marked.parse(text, {
+                    breaks: true,
+                    gfm: true
+                });
+
+                console.log('Markdown parsing result:', result.substring(0, 200) + '...');
+                return result;
+
+            } catch (error) {
+                console.error('Error parsing markdown:', error);
+                console.error('Text that failed to parse:', text.substring(0, 200) + '...');
+                return text; // Return plain text if parsing fails
+            }
+        }
+
+        function toggleConfig() {
+            const panel = document.getElementById('configPanel');
+            const overlay = document.getElementById('configOverlay');
+            panel.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function closeConfig() {
+            const panel = document.getElementById('configPanel');
+            const overlay = document.getElementById('configOverlay');
+            panel.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+
+                document.getElementById('topK').value = config.context_settings.top_k;
+                document.getElementById('contextLength').value = config.context_settings.context_length;
+                document.getElementById('maxChars').value = config.context_settings.max_context_chars;
+            } catch (error) {
+                console.error('Error loading config:', error);
+            }
+        }
+
+        async function saveConfig() {
+            try {
+                const config = {
+                    context_settings: {
+                        top_k: parseInt(document.getElementById('topK').value),
+                        context_length: parseInt(document.getElementById('contextLength').value),
+                        max_context_chars: parseInt(document.getElementById('maxChars').value)
+                    }
+                };
+
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                if (response.ok) {
+                    alert('Configuration saved successfully!');
+                    closeConfig();
+                } else {
+                    alert('Error saving configuration');
+                }
+            } catch (error) {
+                console.error('Error saving config:', error);
+                alert('Error saving configuration');
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+
+
+        function addMessage(content, isUser = false, messageId = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.id = messageId || `msg-${Date.now()}`;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            // Enhanced formatting for better readability
+            let formattedContent = formatMarkdown(content);
+
+            // Wrap in paragraph div
+            formattedContent = '<div class="paragraph">' + formattedContent + '</div>';
+
+            contentDiv.innerHTML = formattedContent;
+
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            return messageDiv;
+        }
+
+        function addSources(sources, messageId) {
+            const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
+
+            const sourcesDiv = document.createElement('div');
+            sourcesDiv.className = 'sources';
+
+            const sourcesTitle = document.createElement('h4');
+            sourcesTitle.textContent = '📚 Sources:';
+            sourcesDiv.appendChild(sourcesTitle);
+
+            sources.forEach(source => {
+                const sourceItem = document.createElement('div');
+                sourceItem.className = 'source-item';
+
+                const link = document.createElement('a');
+                link.href = source.url;
+                link.target = '_blank';
+                link.textContent = `${source.id}. ${source.title} (${source.space_name})`;
+
+                sourceItem.appendChild(link);
+                sourcesDiv.appendChild(sourceItem);
+            });
+
+            messageDiv.appendChild(sourcesDiv);
+            
+            // Scroll to bottom after adding sources
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            console.log('sendMessage called');
+            if (isStreaming) {
+                console.log('Already streaming, returning');
+                return;
+            }
+
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            console.log('Message:', message);
+
+            if (!message) {
+                console.log('Empty message, returning');
+                return;
+            }
+
+            // Disable input and button while processing
+            input.disabled = true;
+            input.placeholder = 'Processing...';
+            const sendButton = document.getElementById('sendButton');
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<div class="loading"></div>';
+
+            // Clear input and disable it
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Add user message
+            addMessage(message, true);
+
+            // Add bot message placeholder
+            currentMessageId = `msg-${Date.now()}`;
+            const botMessage = addMessage('', false, currentMessageId);
+            const botContent = botMessage.querySelector('.message-content');
+            botContent.textContent = '';
+            botContent.classList.add('typing');
+
+            isStreaming = true;
+
+            try {
+                const response = await fetch('/api/stream-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let sources = null;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+
+                                switch (data.type) {
+                                    case 'start':
+                                        botContent.classList.remove('typing');
+                                        break;
+
+                                    case 'sources':
+                                        sources = data.sources;
+                                        break;
+
+                                    case 'char':
+                                        // Accumulate text without formatting during streaming
+                                        botContent.textContent += data.char;
+                                        // Scroll to bottom as text is being added
+                                        const messagesContainer = document.getElementById('chatMessages');
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        break;
+
+                                    case 'complete':
+                                        // Apply markdown formatting to the complete response
+                                        const rawText = botContent.textContent;
+                                        console.log('Complete raw response:', rawText);
+                                        const formattedText = formatMarkdown(rawText);
+                                        console.log('Formatted response:', formattedText.substring(0, 200) + '...');
+                                        botContent.innerHTML = formattedText;
+                                        if (sources) {
+                                            addSources(sources, currentMessageId);
+                                        }
+                                        // Scroll to bottom after formatting is complete
+                                        const messagesContainer = document.getElementById('chatMessages');
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                        break;
+
+                                    case 'error':
+                                        botContent.textContent = `Error: ${data.message}`;
+                                        break;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing SSE data:', e);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                const botContent = document.getElementById(currentMessageId)?.querySelector('.message-content');
+                if (botContent) {
+                    botContent.textContent = 'Sorry, I encountered an error. Please try again.';
+                }
+            } finally {
+                isStreaming = false;
+                input.disabled = false;
+                input.placeholder = 'Ask anything';
+                sendButton.disabled = false;
+                sendButton.innerHTML = '➤';
+            }
+        }
+    </script>
+</body>
+
+</html>

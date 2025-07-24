@@ -24,6 +24,7 @@ Commands:
   ingest-config - Ingest documents from configured spaces (with nested spaces)
   ingest-local  - Ingest documents from local docs folder
   query         - Start interactive Q&A session
+  web           - Start web-based chat interface
   config        - Edit Q&A bot configuration
   help          - Show this help message
 
@@ -34,6 +35,7 @@ Examples:
   python main.py ingest-config
   python main.py ingest-local
   python main.py query
+  python main.py web
   python main.py config
 
 Environment Variables:
@@ -75,6 +77,13 @@ def main():
         print("🤖 Starting interactive Q&A session...")
         print("Type 'exit' to quit\n")
         query_main()
+    
+    elif command == "web":
+        print("🌐 Starting web-based chat interface...")
+        print("Opening browser to http://localhost:5001")
+        print("Press Ctrl+C to stop the server\n")
+        from web_app import app
+        app.run(debug=False, host='0.0.0.0', port=5001)
     
     elif command == "config":
         print("🔧 Starting configuration editor...")

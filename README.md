@@ -97,6 +97,20 @@ python main.py ingest-local
 python main.py query
 ```
 
+### Start Web Interface
+
+```bash
+python main.py web
+```
+
+This will start a web-based chat interface at http://localhost:5001 with:
+- Modern ChatGPT-style UI
+- Real-time streaming responses
+- **Enhanced formatting** with structured output
+- Source attribution
+- Configuration panel
+- Mobile-responsive design
+
 ### Configure Q&A Bot Settings
 
 ```bash
@@ -107,6 +121,25 @@ python main.py config
 
 ```bash
 python main.py help
+```
+
+## Examples
+
+```bash
+# Test your Confluence connection
+python main.py test
+
+# Ingest documents from configured spaces
+python main.py ingest-config
+
+# Start interactive Q&A session
+python main.py query
+
+# Start web interface
+python main.py web
+
+# Edit configuration
+python main.py config
 ```
 
 ## Q&A Bot Commands
@@ -181,9 +214,12 @@ The bot uses a JSON configuration file (`config/qa_config.json`) for easy custom
 ```
 confluence-bot/
 ├── main.py                 # Main orchestrator
+├── web_app.py              # Flask web application
 ├── edit_config.py          # Configuration editor
 ├── requirements.txt        # Python dependencies
 ├── README.md              # This file
+├── templates/              # Web templates
+│   └── index.html         # Chat interface template
 ├── src/                   # Core modules
 │   ├── query.py           # Q&A interface
 │   ├── vector_store.py    # Vector database operations

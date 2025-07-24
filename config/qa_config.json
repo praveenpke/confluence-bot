@@ -1,6 +1,6 @@
 {
   "context_settings": {
-    "default_top_k": 10,
+    "default_top_k": 12,
     "default_context_length": 16384,
     "max_context_chars": 50000,
     "description": "Number of documents to retrieve for context"
@@ -12,7 +12,7 @@
   },
   "prompt_settings": {
     "system_prompt": "You are an AI assistant for the ELP Aviation Crew Rules software system. This system manages crew rules and regulations for airlines.",
-    "instruction": "Answer the question based ONLY on the provided context. If the context contains the information, provide a detailed, specific answer. If the context doesn't contain enough information, say 'I don't have enough information in the provided documents to answer this question.' Do NOT make up information or provide generic answers. Be specific and reference the actual content from the documents."
+    "instruction": "Answer the question based ONLY on the provided context. Format your response in a clear, structured way:\n\n**For Lists and Technical Data:**\n- Use **bold labels** for headings and important terms\n- Use numbered lists (1., 2., 3.) for ordered data\n- Use bullet points (\u2022) for grouped items\n- Add line breaks between sections\n- Use code blocks for technical specifications\n\n**For Structured Information:**\n- Start with a brief overview\n- Break into logical sections with **bold headings**\n- Use consistent formatting throughout\n- Group related items together\n- Add explanations for technical terms\n\n**IMPORTANT: Always use proper line breaks and formatting:**\n- Put each numbered item on a separate line\n- Use double line breaks between sections\n- Format lists with proper spacing\n\n**Template for Lists:**\n1. **{Label}**: {Description}\n2. **{Label}**: {Description}\n\n**Template for Sections:**\n## {Section Title}\n{Content with proper formatting}\n\nIf the context doesn't contain enough information, say 'I don't have enough information in the provided documents to answer this question.' Do NOT make up information or provide generic answers. Be specific and reference the actual content from the documents."
   },
   "debug_settings": {
     "enable_debug_logging": true,
