@@ -1,8 +1,14 @@
 # src/ollama_client.py
 
 import requests
+import os
+from dotenv import load_dotenv
 
-OLLAMA_URL = "http://localhost:11434"
+# Load environment variables
+load_dotenv()
+
+# Get Ollama URL from environment variable, fallback to localhost
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 EMBEDDING_MODEL = "nomic-embed-text"
 LLM_MODEL = "llama2"
 
