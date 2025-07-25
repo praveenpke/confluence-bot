@@ -23,11 +23,17 @@ client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
 
 def create_collection():
-    if not client.collection_exists(COLLECTION_NAME):
+    try:
+        # Check if collection exists by trying to get it
+        client.get_collection(COLLECTION_NAME)
+        print(f"        ✅ Collection '{COLLECTION_NAME}' already exists")
+    except Exception:
+        # Collection doesn't exist, create it
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(size=768, distance=Distance.COSINE)
         )
+        print(f"        ✅ Created collection '{COLLECTION_NAME}'")
 
 
 def upsert_embeddings(docs):
