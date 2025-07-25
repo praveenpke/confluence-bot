@@ -80,7 +80,8 @@ gcloud compute ssh $INSTANCE_NAME --zone=$ZONE --command="sudo chown -R elp-chat
 
 # Install dependencies
 echo "📦 Installing Python dependencies..."
-gcloud compute ssh $INSTANCE_NAME --zone=$ZONE --command="cd $REMOTE_DIR && sudo -u elp-chat /home/elp-chat/venv/bin/pip install -r requirements.txt" --quiet
+gcloud compute ssh $INSTANCE_NAME --zone=$ZONE --command="sudo mkdir -p /mnt/data/venv && sudo chown elp-chat:elp-chat /mnt/data/venv" --quiet
+gcloud compute ssh $INSTANCE_NAME --zone=$ZONE --command="cd $REMOTE_DIR && sudo -u elp-chat python3 -m venv /mnt/data/venv && sudo -u elp-chat /mnt/data/venv/bin/pip install -r requirements.txt" --quiet
 
 # Setup Qdrant with persistent storage on attached volume
 echo "🗄️ Setting up Qdrant with persistent storage..."
@@ -98,8 +99,8 @@ After=network.target docker.service
 Type=simple
 User=elp-chat
 WorkingDirectory=$REMOTE_DIR
-Environment=PATH=/home/elp-chat/venv/bin
-ExecStart=/home/elp-chat/venv/bin/python start_web.py
+Environment=PATH=/mnt/data/venv/bin
+ExecStart=/mnt/data/venv/bin/python start_web.py
 Restart=always
 RestartSec=10
 
