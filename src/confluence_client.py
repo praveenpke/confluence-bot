@@ -275,6 +275,41 @@ class ConfluenceClient:
             print(f"Error getting child spaces for {parent_space_key}: {e}")
             return []
 
+    def get_all_spaces(self) -> List[Dict[str, Any]]:
+        """
+        Get all spaces from Confluence.
+        """
+        spaces = []
+        start = 0
+        limit = 100
+        
+        while True:
+            url = f"{self.base_url}/rest/api/space"
+            params = {
+                "limit": limit,
+                "start": start,
+                "expand": "description.plain"
+            }
+            
+            response = requests.get(url, headers=self.headers, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            results = data.get("results", [])
+            
+            if not results:
+                break
+                
+            spaces.extend(results)
+            
+            # Check if there are more spaces
+            if not data.get("_links", {}).get("next"):
+                break
+                
+            start += limit
+        
+        return spaces
+
     def get_pages_for_ingestion(self, space_key: str = None) -> List[Dict[str, Any]]:
         """
         Get all pages and format them for ingestion into the vector database.

@@ -1,11 +1,569 @@
 [
   {
+    "key": "Admin",
+    "name": "Admin",
+    "type": "global",
+    "url": "/spaces/Admin",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "Adsboosts",
+    "name": "Ads/boosts",
+    "type": "global",
+    "url": "/spaces/Adsboosts",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "BUS",
+    "name": "backlog User Stories",
+    "type": "global",
+    "url": "/spaces/BUS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "BA",
+    "name": "Breeze Airlines",
+    "type": "global",
+    "url": "/spaces/BA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CCMD",
+    "name": "CAE Crew Manager Documentation",
+    "type": "global",
+    "url": "/spaces/CCMD",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CAM",
+    "name": "Campaigns",
+    "type": "global",
+    "url": "/spaces/CAM",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CI",
+    "name": "Change/Incident Tracker",
+    "type": "global",
+    "url": "/spaces/CI",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CB",
+    "name": "Crew Bid",
+    "type": "global",
+    "url": "/spaces/CB",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CP1",
+    "name": "Crew Portal",
+    "type": "global",
+    "url": "/spaces/CP1",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CRREC",
+    "name": "Crew Recovery",
+    "type": "global",
+    "url": "/spaces/CRREC",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
     "key": "CREW",
     "name": "Crew Rules",
     "type": "global",
-    "url": "https://elpaviation.atlassian.net/wiki/pages/viewpage.action?pageId=923926540",
+    "url": "/spaces/CREW",
     "description": "",
     "status": "current",
-    "page_count": 1
+    "page_count": 0
+  },
+  {
+    "key": "DS",
+    "name": "Design Specs",
+    "type": "knowledge_base",
+    "url": "/spaces/DS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "D2",
+    "name": "DevOps",
+    "type": "global",
+    "url": "/spaces/do",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "DCCML",
+    "name": "DevOps Change Control Management Link",
+    "type": "global",
+    "url": "/spaces/DCCML",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "DEV",
+    "name": "DevOps(archive)",
+    "type": "global",
+    "url": "/spaces/dev1",
+    "description": "",
+    "status": "archived",
+    "page_count": 0
+  },
+  {
+    "key": "EF",
+    "name": "EBook files",
+    "type": "global",
+    "url": "/spaces/EF",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ELP",
+    "name": "ELP Alerts",
+    "type": "global",
+    "url": "/spaces/ELP",
+    "description": "Confluence Space created for Jira Project EA",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ECD",
+    "name": "ELP Company Documents",
+    "type": "global",
+    "url": "/spaces/ECD",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EPELP",
+    "name": "ELP Crew Portal Multi Tenant",
+    "type": "global",
+    "url": "/spaces/EPELP",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "CrewBiid",
+    "name": "ELP CrewBid",
+    "type": "global",
+    "url": "/spaces/CrewBiid",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ECP",
+    "name": "ELP CrewPay",
+    "type": "global",
+    "url": "/spaces/ECP",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EC",
+    "name": "ELP CrewRules",
+    "type": "global",
+    "url": "/spaces/EC",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ECJP",
+    "name": "ELP Customer Job Portal",
+    "type": "global",
+    "url": "/spaces/ECJP",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ECS",
+    "name": "ELP Customer Support",
+    "type": "global",
+    "url": "/spaces/ECS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ED",
+    "name": "ELP Dash",
+    "type": "global",
+    "url": "/spaces/ED",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EDEV",
+    "name": "ELP Developers",
+    "type": "global",
+    "url": "/spaces/EDEV",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ELPHelpers",
+    "name": "ELP Helpers",
+    "type": "global",
+    "url": "/spaces/ELPHelpers",
+    "description": "Contains helper internal libraries/servers documentation",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EP",
+    "name": "ELP Plan",
+    "type": "global",
+    "url": "/spaces/EP",
+    "description": "",
+    "status": "archived",
+    "page_count": 0
+  },
+  {
+    "key": "EP1",
+    "name": "ELP Policies & Procedures",
+    "type": "global",
+    "url": "/spaces/EP1",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EPE",
+    "name": "ELP Portal - Endeavor",
+    "type": "global",
+    "url": "/spaces/EPE",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EPS",
+    "name": "ELP Portal - Spirit",
+    "type": "global",
+    "url": "/spaces/EPS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EPD",
+    "name": "ELP Projects Design",
+    "type": "global",
+    "url": "/spaces/EPD",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ESA",
+    "name": "ELP Spirit Airlines",
+    "type": "global",
+    "url": "/spaces/ESA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ES",
+    "name": "ELP Support",
+    "type": "global",
+    "url": "/spaces/ES",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ELPDashboards",
+    "name": "ELP-Dashboards",
+    "type": "global",
+    "url": "/spaces/ELPDashboards",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "EA",
+    "name": "Endeavor Airlines",
+    "type": "global",
+    "url": "/spaces/EA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "FCP",
+    "name": "Frontier Crew Pay",
+    "type": "global",
+    "url": "/spaces/FCP",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "IB",
+    "name": "Industry Blogs",
+    "type": "global",
+    "url": "/spaces/IB",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "IAPI",
+    "name": "Integration API",
+    "type": "global",
+    "url": "/spaces/IAPI",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ITD",
+    "name": "Internal Training Documents",
+    "type": "global",
+    "url": "/spaces/ITD",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "IA",
+    "name": "IT Admin",
+    "type": "global",
+    "url": "/spaces/IA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "IA1",
+    "name": "IT Admin",
+    "type": "knowledge_base",
+    "url": "/spaces/IA1",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ITSM",
+    "name": "ITSM",
+    "type": "global",
+    "url": "/spaces/ITSM",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "JES",
+    "name": "Jira Enterprise Support",
+    "type": "global",
+    "url": "/spaces/JES",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "JiraConflu",
+    "name": "Jira-Confluence",
+    "type": "global",
+    "url": "/spaces/JiraConflu",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "KA",
+    "name": "Kalitta Air",
+    "type": "global",
+    "url": "/spaces/KA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "LoginSSO",
+    "name": "Login and SSO Knowledge Base",
+    "type": "global",
+    "url": "/spaces/LoginSSO",
+    "description": "Contains information about authentication/authorization across all the applications",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "MCP",
+    "name": "Multi tenant Crew portal",
+    "type": "global",
+    "url": "/spaces/MCP",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "OADTR",
+    "name": "Old Airline Docs to Reorganize",
+    "type": "global",
+    "url": "/spaces/OADTR",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "OnCall",
+    "name": "On-Call",
+    "type": "global",
+    "url": "/spaces/OnCall",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "PAS",
+    "name": "Podcast: aviation series",
+    "type": "global",
+    "url": "/spaces/PAS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "PM",
+    "name": "Project Management",
+    "type": "global",
+    "url": "/spaces/PM",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "Projects",
+    "name": "Projects",
+    "type": "global",
+    "url": "/spaces/Projects",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "PQ",
+    "name": "Projects - QA",
+    "type": "collaboration",
+    "url": "/spaces/PQ",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "PSA",
+    "name": "PSA Airlines",
+    "type": "global",
+    "url": "/spaces/PSA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "RBHAHawaii",
+    "name": "RB_HA-Hawaiian",
+    "type": "collaboration",
+    "url": "/spaces/RBHAHawaii",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "STLC",
+    "name": "Software Testing Life Cycle",
+    "type": "global",
+    "url": "/spaces/STLC",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "ST",
+    "name": "Support Test",
+    "type": "global",
+    "url": "/spaces/ST",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "TD2",
+    "name": "Technical documents 2023",
+    "type": "global",
+    "url": "/spaces/TD2",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "TS",
+    "name": "Technical Specs",
+    "type": "global",
+    "url": "/spaces/TS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "TP",
+    "name": "Testing Projects",
+    "type": "global",
+    "url": "/spaces/TP",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "TTS",
+    "name": "Think Tank stuff",
+    "type": "global",
+    "url": "/spaces/TTS",
+    "description": "",
+    "status": "current",
+    "page_count": 0
+  },
+  {
+    "key": "WA",
+    "name": "Westjet Airlines",
+    "type": "global",
+    "url": "/spaces/WA",
+    "description": "",
+    "status": "current",
+    "page_count": 0
   }
 ]

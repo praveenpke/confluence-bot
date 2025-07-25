@@ -104,12 +104,15 @@ python main.py web
 ```
 
 This will start a web-based chat interface at http://localhost:5001 with:
-- Modern ChatGPT-style UI
-- Real-time streaming responses
-- **Enhanced formatting** with structured output
-- Source attribution
-- Configuration panel
-- Mobile-responsive design
+- **Modern ChatGPT-style UI** with dark theme and rounded message bubbles
+- **Real-time streaming responses** with character-by-character typing effect
+- **Enhanced formatting** with structured markdown output and proper line breaks
+- **Source attribution** with clickable links to Confluence pages
+- **Settings popup** with configuration panel (⚙️ icon in top right)
+- **Auto-scrolling** chat window that follows the conversation
+- **Input protection** - disabled during processing to prevent confusion
+- **Mobile-responsive design** that works on all devices
+- **AI glow effects** on the input box for a modern look
 
 ### Configure Q&A Bot Settings
 
@@ -150,8 +153,32 @@ When using the interactive Q&A session, you can use these commands:
 - `config` - Show current configuration settings
 - `set-top-k <number>` - Adjust number of documents retrieved (e.g., `set-top-k 15`)
 - `set-context-length <number>` - Adjust LLM context length (e.g., `set-context-length 32768`)
-- `set-max-chars <number>` - Adjust max context characters (e.g., `set-max-chars 100000`)
+- `set-max-chars <number>` - Adjust max context characters (e.g., `set-max-chars 150000`)
 - `reload-config` - Reload configuration from file
+
+## Web Interface Features
+
+The web interface provides an intuitive chat experience:
+
+### **UI Features:**
+- **Dark Theme**: Modern `#1e1e1f` background with `#ececf1` text
+- **Rounded Messages**: `25px` border radius for soft, modern appearance
+- **Settings Icon**: ⚙️ icon in top right corner opens configuration popup
+- **AI Glow Input**: Rounded input box with animated glow effects
+- **Send Button**: ➤ icon positioned inside the input field
+
+### **Interaction Features:**
+- **Enter to Send**: Press Enter to send messages (Shift+Enter for new line)
+- **Streaming Responses**: Real-time character-by-character response display
+- **Markdown Rendering**: Proper formatting of headers, lists, and code blocks
+- **Source Links**: Clickable links to original Confluence pages
+- **Configuration Panel**: Popup settings for adjusting bot parameters
+
+### **Technical Features:**
+- **Input Protection**: Input disabled during processing with "Processing..." placeholder
+- **Auto-scrolling**: Chat window automatically follows new messages
+- **Error Handling**: Graceful error messages and recovery
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
 
 ## Configuration
 
@@ -160,9 +187,9 @@ The bot uses a JSON configuration file (`config/qa_config.json`) for easy custom
 ```json
 {
   "context_settings": {
-    "default_top_k": 10,
-    "default_context_length": 16384,
-    "max_context_chars": 50000
+    "default_top_k": 5,
+    "default_context_length": 32768,
+    "max_context_chars": 150000
   },
   "model_settings": {
     "llm_model": "llama2",
@@ -182,9 +209,9 @@ The bot uses a JSON configuration file (`config/qa_config.json`) for easy custom
 
 ### Configuration Parameters
 
-- **default_top_k**: Number of documents to retrieve for context (default: 10)
-- **default_context_length**: Token limit for LLM context (default: 16384)
-- **max_context_chars**: Maximum characters in context to prevent overflow (default: 50000)
+- **default_top_k**: Number of documents to retrieve for context (default: 5)
+- **default_context_length**: Token limit for LLM context (default: 32768)
+- **max_context_chars**: Maximum characters in context to prevent overflow (default: 150000)
 - **enable_debug_logging**: Enable detailed debug output (default: true)
 
 ## How It Works
@@ -250,13 +277,15 @@ confluence-bot/
    - Check Docker container status
 
 4. **Poor Answer Quality**
-   - Increase `default_top_k` in configuration
-   - Increase `default_context_length` for more context
+   - Increase `default_top_k` in configuration (try 8-12)
+   - Increase `default_context_length` for more context (try 32768)
+   - Increase `max_context_chars` to prevent truncation (try 150000)
    - Check if relevant documents were ingested
 
 5. **Memory Issues**
-   - Reduce `max_context_chars` in configuration
-   - Reduce `default_top_k` to retrieve fewer documents
+   - Reduce `max_context_chars` in configuration (try 100000)
+   - Reduce `default_top_k` to retrieve fewer documents (try 3-5)
+   - Reduce `default_context_length` for smaller context (try 16384)
 
 ### Getting Confluence API Token
 
@@ -267,10 +296,11 @@ confluence-bot/
 
 ## Performance Tips
 
-- **Context Size**: Start with `default_top_k: 10` and adjust based on answer quality
-- **Token Limits**: Use `default_context_length: 16384` for llama2, adjust for other models
-- **Memory**: Monitor memory usage and reduce `max_context_chars` if needed
+- **Context Size**: Start with `default_top_k: 5` and adjust based on answer quality
+- **Token Limits**: Use `default_context_length: 32768` for llama2, adjust for other models
+- **Memory**: Monitor memory usage and reduce `max_context_chars` if needed (current: 150000)
 - **Ingestion**: Use `ingest-config` for production use, it handles nested pages better
+- **Web Interface**: Use the settings popup (⚙️) to adjust parameters in real-time
 
 ## Contributing
 
