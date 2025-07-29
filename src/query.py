@@ -3,7 +3,7 @@ from src.vector_store import query_similar, get_answer, set_context_config, get_
 from src.config_loader import update_config_section, get_config_value
 
 def main():
-    print("🤖 ELP Crew Rules Q&A Bot")
+    print("🤖 ELP Chat Q&A Bot")
     print("Commands:")
     print("  'exit' - quit")
     print("  'config' - see current settings")
