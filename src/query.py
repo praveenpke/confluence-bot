@@ -1,114 +1,164 @@
-from src.ollama_client import get_embedding
-from src.vector_store import query_similar, get_answer, set_context_config, get_context_config
-from src.config_loader import update_config_section, get_config_value
+# src/query.py
+
+import os
+from src.ollama_client import get_embedding, call_model
+from src.vector_store import search_similar, get_collection_stats, collection_exists
+from src.config_loader import load_qa_config
+
+# Load configuration
+config = load_qa_config()
+DEFAULT_TOP_K = config["search_settings"]["top_k"]
+MAX_CONTEXT_CHARS = config["context_settings"]["max_context_chars"]
+
+def get_answer(query, top_k=DEFAULT_TOP_K):
+    """
+    Get answer for a query with graceful fallback when no data is available
+    """
+    try:
+        # Check if collection exists and has data
+        if not collection_exists():
+            return {
+                "answer": "I don't have any knowledge base set up yet. Please run ingestion first.",
+                "sources": [],
+                "confidence": "low",
+                "status": "no_collection"
+            }
+        
+        # Get collection stats
+        stats = get_collection_stats()
+        if not stats or stats.get('points_count', 0) == 0:
+            return {
+                "answer": "I don't have any documents loaded yet. The ingestion process may still be running. Please try again in a few minutes.",
+                "sources": [],
+                "confidence": "low",
+                "status": "no_data"
+            }
+        
+        # Get query embedding
+        query_vector = get_embedding(query)
+        if not query_vector:
+            return {
+                "answer": "Sorry, I couldn't process your query. Please try again.",
+                "sources": [],
+                "confidence": "low",
+                "status": "embedding_error"
+            }
+        
+        # Search for similar documents
+        results = search_similar(query_vector, limit=top_k)
+        
+        if not results:
+            return {
+                "answer": "I couldn't find any relevant information for your query. The ingestion process may still be running, or your question might be outside the scope of my knowledge base.",
+                "sources": [],
+                "confidence": "low",
+                "status": "no_matches"
+            }
+        
+        # Build context from results
+        context = ""
+        sources = []
+        
+        for result in results:
+            text = result.payload.get("text", "")
+            metadata = {k: v for k, v in result.payload.items() if k != "text"}
+            
+            # Add to context if we haven't exceeded the limit
+            if len(context) + len(text) < MAX_CONTEXT_CHARS:
+                context += text + "\n\n"
+                sources.append({
+                    "text": text[:200] + "..." if len(text) > 200 else text,
+                    "metadata": metadata,
+                    "score": result.score
+                })
+        
+        # Generate answer using LLM
+        prompt = f"""Based on the following context, answer the user's question. If the context doesn't contain relevant information, say so.
+
+Context:
+{context}
+
+Question: {query}
+
+Answer:"""
+
+        answer = call_model(prompt)
+        
+        # Determine confidence based on results
+        if results and results[0].score > 0.7:
+            confidence = "high"
+        elif results and results[0].score > 0.5:
+            confidence = "medium"
+        else:
+            confidence = "low"
+        
+        return {
+            "answer": answer,
+            "sources": sources,
+            "confidence": confidence,
+            "status": "success",
+            "total_documents": stats.get('points_count', 0)
+        }
+        
+    except Exception as e:
+        return {
+            "answer": f"Sorry, I encountered an error: {str(e)}",
+            "sources": [],
+            "confidence": "low",
+            "status": "error"
+        }
 
 def main():
-    print("🤖 ELP Chat Q&A Bot")
-    print("Commands:")
-    print("  'exit' - quit")
-    print("  'config' - see current settings")
-    print("  'set-top-k <number>' - adjust number of documents retrieved")
-    print("  'set-context-length <number>' - adjust LLM context length")
-    print("  'set-max-chars <number>' - adjust max context characters")
-    print("  'reload-config' - reload configuration from file")
+    """
+    Interactive Q&A session
+    """
+    print("🤖 Confluence Q&A Bot")
+    print("Type 'exit' to quit\n")
+    
+    # Check initial status
+    stats = get_collection_stats()
+    if stats:
+        print(f"📊 Knowledge base: {stats.get('points_count', 0)} documents loaded")
+    else:
+        print("📊 Knowledge base: Not available")
+    
+    print("\n💡 You can ask questions even while ingestion is running!")
+    print("   The system will use whatever data is available.\n")
     
     while True:
-        query = input("\nAsk me anything from Confluence: ").strip()
-        if not query:
-            print("⚠️ Please enter a valid query.")
-            continue
-        if query.lower() == 'exit':
-            print("👋 Goodbye!")
+        try:
+            query = input("❓ Your question: ").strip()
+            
+            if query.lower() in ['exit', 'quit', 'q']:
+                print("👋 Goodbye!")
+                break
+            
+            if not query:
+                continue
+            
+            print("\n🔍 Searching...")
+            result = get_answer(query)
+            
+            # Print answer
+            print(f"\n💬 Answer: {result['answer']}")
+            
+            # Print status info
+            if result['status'] == 'success':
+                print(f"📊 Confidence: {result['confidence']}")
+                if result['sources']:
+                    print(f"📚 Sources: {len(result['sources'])} documents")
+                    for i, source in enumerate(result['sources'][:2], 1):
+                        print(f"   {i}. {source['text'][:100]}...")
+            else:
+                print(f"⚠️ Status: {result['status']}")
+            
+            print("\n" + "="*50 + "\n")
+            
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
             break
-        if query.lower() == 'config':
-            config = get_context_config()
-            print(f"\n📊 Current Configuration:")
-            print(f"  Documents retrieved: {config['top_k']}")
-            print(f"  Context length (tokens): {config['context_length']}")
-            print(f"  Max context chars: {config['max_context_chars']}")
-            
-            # Also show config file values
-            top_k_file = get_config_value("context_settings", "default_top_k")
-            context_length_file = get_config_value("context_settings", "default_context_length")
-            max_chars_file = get_config_value("context_settings", "max_context_chars")
-            print(f"\n📁 Config file values:")
-            print(f"  Documents retrieved: {top_k_file}")
-            print(f"  Context length (tokens): {context_length_file}")
-            print(f"  Max context chars: {max_chars_file}")
-            continue
-            
-        if query.lower().startswith('set-top-k '):
-            try:
-                new_top_k = int(query.split()[1])
-                set_context_config(top_k=new_top_k)
-                continue
-            except (IndexError, ValueError):
-                print("⚠️ Usage: 'set-top-k <number>' (e.g., 'set-top-k 15')")
-                continue
-                
-        if query.lower().startswith('set-context-length '):
-            try:
-                new_length = int(query.split()[1])
-                set_context_config(context_length=new_length)
-                continue
-            except (IndexError, ValueError):
-                print("⚠️ Usage: 'set-context-length <number>' (e.g., 'set-context-length 32768')")
-                continue
-                
-        if query.lower().startswith('set-max-chars '):
-            try:
-                new_chars = int(query.split()[1])
-                set_context_config(max_context_chars=new_chars)
-                continue
-            except (IndexError, ValueError):
-                print("⚠️ Usage: 'set-max-chars <number>' (e.g., 'set-max-chars 100000')")
-                continue
-                
-        if query.lower() == 'reload-config':
-            print("🔄 Reloading configuration from file...")
-            # This will reload on next query since config is loaded at module level
-            print("✅ Configuration will be reloaded on next query")
-            continue
-            
-        print("🔍 Searching for relevant documents...")
-        vector = get_embedding(query)
-        if not vector:
-            print("❌ No embedding returned. Check model or input.")
-            continue
-            
-        context_docs = query_similar(vector)
-        
-        if not context_docs:
-            print("❌ No relevant documents found.")
-            continue
-        
-        # Show sources with better metadata extraction
-        print("\n📚 Sources:")
-        for i, doc in enumerate(context_docs, 1):
-            # Try different possible title fields
-            title = (doc.payload.get("page_title") or 
-                    doc.payload.get("title") or 
-                    doc.payload.get("attachment_title") or 
-                    "Unknown")
-            
-            url = doc.payload.get("url", "")
-            content_type = doc.payload.get("content_type", "page")
-            space_name = doc.payload.get("space_name", "")
-            
-            # Format the source display
-            source_info = f"  {i}. {title}"
-            if space_name:
-                source_info += f" (Space: {space_name})"
-            if content_type == "pdf_attachment":
-                source_info += " [PDF]"
-            print(source_info)
-            
-            if url:
-                print(f"     URL: {url}")
-        
-        print("\n🤖 Generating answer...")
-        answer = get_answer(query, context_docs)
-        print(f"\n🧠 Answer: {answer}")
+        except Exception as e:
+            print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance, PointStruct
 from src.ollama_client import call_model
 from src.config_loader import load_qa_config
+from qdrant_client.http.exceptions import UnexpectedResponse
+import requests
 
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
@@ -19,68 +21,127 @@ DEFAULT_TOP_K = config["context_settings"]["default_top_k"]
 DEFAULT_CONTEXT_LENGTH = config["context_settings"]["default_context_length"]
 MAX_CONTEXT_CHARS = config["context_settings"]["max_context_chars"]
 
+# Initialize client
 client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
+def collection_exists():
+    """
+    Check if collection exists without using the problematic get_collection method
+    """
+    try:
+        response = requests.get(f"http://{QDRANT_HOST}:{QDRANT_PORT}/collections/{COLLECTION_NAME}")
+        return response.status_code == 200
+    except Exception:
+        return False
+
+def get_collection_info():
+    """
+    Get collection info using direct HTTP request to avoid version conflicts
+    """
+    try:
+        response = requests.get(f"http://{QDRANT_HOST}:{QDRANT_PORT}/collections/{COLLECTION_NAME}")
+        if response.status_code == 200:
+            return response.json()["result"]
+        return None
+    except Exception:
+        return None
 
 def create_collection():
+    """
+    Create collection if it doesn't exist, handle conflicts gracefully
+    """
     try:
-        # Check if collection exists by trying to get it
-        client.get_collection(COLLECTION_NAME)
-        print(f"        ✅ Collection '{COLLECTION_NAME}' already exists")
-    except Exception:
-        # Collection doesn't exist, create it
+        # Check if collection exists using direct HTTP request
+        if collection_exists():
+            print(f"✅ Collection '{COLLECTION_NAME}' already exists")
+            info = get_collection_info()
+            if info:
+                print(f"   📊 Points: {info.get('points_count', 0)}")
+                print(f"   📊 Status: {info.get('status', 'unknown')}")
+            return
+        
+        # Create collection
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(size=768, distance=Distance.COSINE)
         )
-        print(f"        ✅ Created collection '{COLLECTION_NAME}'")
-
+        print(f"✅ Created collection '{COLLECTION_NAME}'")
+        
+    except UnexpectedResponse as e:
+        if "already exists" in str(e):
+            print(f"✅ Collection '{COLLECTION_NAME}' already exists (handled conflict)")
+        else:
+            print(f"❌ Error creating collection: {e}")
+            raise
+    except Exception as e:
+        print(f"❌ Error creating collection: {e}")
+        raise
 
 def upsert_embeddings(docs):
     """
-    Upsert embeddings into the vector database with unique IDs
+    Upsert embeddings into the collection
     """
-    points = []
-    
-    # Get the next available ID
     try:
-        # Get current collection info to find next ID
-        collection_info = client.get_collection(COLLECTION_NAME)
-        current_count = collection_info.points_count or 0
-        next_id = current_count
-    except:
-        next_id = 0
-    
-    for i, doc in enumerate(docs):
-        payload = {"text": doc["text"]}
-        # Add metadata if available
-        if "metadata" in doc:
-            payload.update(doc["metadata"])
+        if not docs:
+            print("⚠️ No documents to upsert")
+            return
         
-        # Use unique ID for each document
-        unique_id = next_id + i
+        # Prepare points
+        points = []
+        for i, doc in enumerate(docs):
+            point = PointStruct(
+                id=i,
+                vector=doc["vector"],
+                payload={
+                    "text": doc["text"],
+                    **doc.get("metadata", {})
+                }
+            )
+            points.append(point)
         
-        points.append(PointStruct(id=unique_id, vector=doc["vector"], payload=payload))
-    
-    if points:
-        client.upsert(collection_name=COLLECTION_NAME, points=points)
-        print(f"        ✅ Upserted {len(points)} documents with IDs {next_id} to {next_id + len(points) - 1}")
+        # Upsert points
+        client.upsert(
+            collection_name=COLLECTION_NAME,
+            points=points
+        )
+        
+        print(f"✅ Upserted {len(docs)} documents")
+        
+    except Exception as e:
+        print(f"❌ Error upserting embeddings: {e}")
+        raise
 
+def search_similar(query_vector, limit=5):
+    """
+    Search for similar documents
+    """
+    try:
+        results = client.search(
+            collection_name=COLLECTION_NAME,
+            query_vector=query_vector,
+            limit=limit
+        )
+        return results
+    except Exception as e:
+        print(f"❌ Error searching: {e}")
+        return []
 
-def query_similar(vector, top_k=DEFAULT_TOP_K):
+def get_collection_stats():
     """
-    Query similar documents with configurable context size.
-    
-    Args:
-        vector: The query vector
-        top_k: Number of documents to retrieve (default from config)
+    Get collection statistics
     """
-    results = client.search(
-        collection_name=COLLECTION_NAME,
-        query_vector=vector,
-        limit=top_k
-    )
-    return results  # Return full results so get_answer can extract from payload
+    try:
+        info = get_collection_info()
+        if info:
+            return {
+                "points_count": info.get("points_count", 0),
+                "status": info.get("status", "unknown"),
+                "indexed_vectors_count": info.get("indexed_vectors_count", 0)
+            }
+        return None
+    except Exception as e:
+        print(f"❌ Error getting collection stats: {e}")
+        return None
 
 
 def get_answer(query: str, docs: list) -> str:
