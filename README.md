@@ -1,4 +1,4 @@
-# ELP Confluence Q&A Bot
+# Confluence Q&A Bot
 
 A conversational AI bot that can answer questions about your Confluence documentation using vector search and Ollama. This bot is specifically designed for the ELP Aviation Crew Rules system but can be adapted for other Confluence spaces.
 
