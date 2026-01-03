@@ -73,7 +73,7 @@ pip install -r requirements.txt
 Create a `.env` file:
 ```bash
 # Confluence Configuration
-CONFLUENCE_BASE_URL=https://elpaviation.atlassian.net
+CONFLUENCE_BASE_URL=https://dummy.atlassian.net
 CONFLUENCE_USERNAME=your-email@domain.com
 CONFLUENCE_API_TOKEN=your-api-token
 
